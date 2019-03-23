@@ -1,0 +1,20 @@
+---
+
+# https://github.com/kubernetes/kubeadm/issues/203#issuecomment-412248894
+
+
+
+
+- name: get kubernetes to only use eth1
+  copy:
+    dest: /etc/default/kubelet
+    content: |
+      KUBELET_EXTRA_ARGS=--node-ip={{ eth1_ip_address }}
+
+
+# This is so that INTERNAL-IP address display eth1 IPs:
+
+#root@kube-master:~# kubectl get nodes -o wide
+#NAME           STATUS   ROLES    AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+#kube-master    Ready    master   96m   v1.13.4   10.3.5.110    <none>        Ubuntu 16.04.5 LTS   4.4.0-131-generic   docker://18.6.1
+#kube-worker1   Ready    <none>   93m   v1.13.4   10.3.5.111    <none>        Ubuntu 16.04.5 LTS   4.4.0-131-generic   docker://18.6.1

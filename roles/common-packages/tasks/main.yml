@@ -45,3 +45,4 @@
     creates: /tmp/apt-mark-hold-flag.txt
 
 - include_tasks: disable-swap.yml
+- include_tasks: use-eth1.yml

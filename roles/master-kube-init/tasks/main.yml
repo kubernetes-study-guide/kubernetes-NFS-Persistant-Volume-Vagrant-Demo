@@ -68,3 +68,9 @@
 #kube-controller-manager-kube-master   1/1     Running   0          106m   10.0.2.15   kube-master   <none>           <none>
 #kube-proxy-xvt5l                      1/1     Running   0          107m   10.0.2.15   kube-master   <none>           <none>
 #kube-scheduler-kube-master            1/1     Running   0          107m   10.0.2.15   kube-master   <none>           <none>
+
+- name: git clone Kubernetes-Study-Guide repo
+  git:
+    repo: https://github.com/Sher-Chowdhury/Kubernetes-Study-Guide.git
+    dest: /root/Kubernetes-Study-Guide
+    version: master

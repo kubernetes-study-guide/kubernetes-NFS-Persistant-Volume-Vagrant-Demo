@@ -11,3 +11,4 @@
 *.box
 .vagrant
 /tmp
+/kube_cache
