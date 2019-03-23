@@ -1,0 +1,56 @@
+---
+
+
+
+
+- name: Create folders for calico
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+    - /root/kubernetes
+    - /root/kubernetes/calico
+
+
+# https://docs.projectcalico.org/v3.6/getting-started/kubernetes/
+- name: Download calico files
+  get_url:
+    url: "{{ item }}"
+    dest: "/root/kubernetes/calico/{{ item | basename }}"
+    mode: 0440
+  loop:
+    - https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+    - https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+ # the calico.yaml file specifies the default pod cidr. You can update this if you like. This is also the value 
+ # that needs to be fed into the kubeadm init command.
+
+# https://docs.ansible.com/ansible/latest/modules/k8s_module.html#k8s-raw-module
+- name: install pip in order to install k8s ansible dependencies
+  apt:
+    update_cache: yes
+    cache_valid_time: 864000 #One day
+    name: python-pip
+  register: python_pip_install_result
+
+- name: upgrade pip
+  shell: /usr/bin/pip install --upgrade pip
+  when: python_pip_install_result.changed
+
+# https://docs.ansible.com/ansible/latest/modules/k8s_module.html#k8s-raw-module
+- name: install k8s ansible dependencies
+  pip:
+    name: "{{ item }}"
+  loop:
+    - pyYAML
+    - openshift
+
+  # this does the same thing as:
+  # kubectl apply -f 
+- name: Create a Service object by reading the definition from a file
+  k8s:
+    state: present
+    src: "/root/kubernetes/calico/{{ item }}"
+  loop:
+    - rbac-kdd.yaml
+    - calico.yaml

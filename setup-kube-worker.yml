@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: yes 
+  gather_facts: yes 
+  roles:
+    - { role: common-packages, tags: common-packages }
+    - { role: worker-kubeadm-join, tags: worker-kubeadm-join }

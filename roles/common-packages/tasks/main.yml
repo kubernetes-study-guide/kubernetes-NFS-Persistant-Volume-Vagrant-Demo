@@ -1,0 +1,47 @@
+---
+
+# https://app.pluralsight.com/player?course=kubernetes-installation-configuration-fundamentals&author=anthony-nocentino&name=edf35e15-3c12-441a-bcbc-254691db32d3&clip=7&mode=live
+
+# This is is same as running:
+# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+
+- name: Add kubernetes apt repo
+  copy:
+    content: |
+      deb https://apt.kubernetes.io/ kubernetes-xenial main
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    mode: 0644
+
+
+# this is same as running:
+# apt-get update
+# apt-get install -y kubelet kubeadm kubectl docker.io
+- name: Update cache and then install packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 864000 #One day
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - kubelet 
+      - kubeadm 
+      - kubectl 
+      - docker.io=18.06.1-0ubuntu1.2~16.04.1  # apt-cache madison docker.io   # https://askubuntu.com/questions/447/how-can-i-see-all-versions-of-a-package-that-are-available-in-the-archive
+      - bash-completion
+      - tree
+
+
+# unable to do the following in ansible:
+# apt-mark hold kubelet kubeadm kubectl docker.io
+
+- name: Don't auto upgrade kubernetes relates packages
+  shell: /usr/bin/apt-mark hold kubelet kubeadm kubectl docker.io && /usr/bin/touch /tmp/apt-mark-hold-flag.txt
+  args:
+    creates: /tmp/apt-mark-hold-flag.txt
+
+- include_tasks: disable-swap.yml

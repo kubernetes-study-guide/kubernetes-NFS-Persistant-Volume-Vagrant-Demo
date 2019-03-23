@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: yes 
+  gather_facts: yes 
+  roles:
+    - { role: common-packages, tags: common-packages }
+    - { role: master-kube-init, tags: master-kube-init }
+    - { role: setup-overlay-networking, tags: setup-overlay-networking }
+#    - { role: consul, tags: consul }
+#    - { role: consul-templates, tags: consul-templates }
