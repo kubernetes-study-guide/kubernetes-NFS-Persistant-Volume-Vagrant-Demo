@@ -1,7 +1,7 @@
 ---
 
 - name: Run kubeadm init command
-  command: /usr/bin/kubeadm init --apiserver-advertise-address 10.2.5.110 --pod-network-cidr=192.168.0.0/16
+  command: /usr/bin/kubeadm init --apiserver-advertise-address 10.3.5.110 --pod-network-cidr=192.168.0.0/16
   args:
     creates: /etc/kubernetes/kubelet.conf
   register: kubeadm_init_output
